@@ -9,7 +9,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
 include_directories(include)
 link_directories(lib)
 
-include_directories(thirdparty/portaudio/src/common)
+include_directories(thirdparty thirdparty/portaudio/src/common)
 add_subdirectory(thirdparty/portaudio)
 link_libraries(portaudio_static)
 
