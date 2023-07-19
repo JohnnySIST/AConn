@@ -5,6 +5,7 @@ set (VERSION_MAJOR 0)
 set (VERSION_MINOR 1)
 message(STATUS "Platform : ${CMAKE_SYSTEM_NAME}")
 
+SET(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
 include_directories(include)
 link_directories(lib)
