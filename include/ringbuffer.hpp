@@ -4,7 +4,7 @@
 #include <cstring>
 #include "config.hpp"
 
-class RingBuffer{
+class RingBuffer{ // parallel secure: one thread read, one thread write
 public:
 	RingBuffer(int capacity,int itemsize){
 		this->capacity=capacity;
