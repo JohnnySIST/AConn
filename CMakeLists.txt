@@ -1,22 +1,21 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.16)
 
 project(AConn)
 set (VERSION_MAJOR 0)
 set (VERSION_MINOR 1)
 message(STATUS "Platform : ${CMAKE_SYSTEM_NAME}")
 
-SET(CMAKE_BUILD_TYPE "Debug")
+SET(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
 include_directories(include)
-link_directories(lib)
 
-# add_subdirectory(thirdparty/portaudio) # to customize in the future
+# build and link portaudio (static)
+add_subdirectory(thirdparty/portaudio)
 link_libraries(portaudio_static)
-add_definitions(-DHV_STATICLIB)
+
+# build and link libhv (static)
+add_subdirectory(thirdparty/libhv)
 link_libraries(hv_static)
-if(WIN32)
-	link_libraries(ws2_32)
-endif()
 
 # add executable files for every file in /src
 aux_source_directory(src SOURCES)
