@@ -13,6 +13,10 @@ include_directories(include)
 add_subdirectory(thirdparty/portaudio)
 link_libraries(portaudio_static)
 
+if(WIN32)
+	link_libraries(ws2_32)
+endif()
+
 # add executable files for every file in /src
 aux_source_directory(src SOURCES)
 foreach(file IN LISTS SOURCES)

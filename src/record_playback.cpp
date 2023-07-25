@@ -1,5 +1,4 @@
 #include "sound.hpp"
-using namespace std;
 int main(int argc,char* args[]){
 	Sound sound;
 	// buffer can store 1-second signal
