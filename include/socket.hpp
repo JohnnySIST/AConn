@@ -32,7 +32,7 @@ public:
 		closesocket(sock_udp);
 		WSACleanup();
 #else
-    close(sock_udp);
+		close(sock_udp);
 #endif
 	}
 	void set_addr(const char* addr,int port=0){
@@ -60,10 +60,10 @@ public:
 			return -1;
 		}
 #else
-    if(iResult==-1){
-      printf("Error while receiving udp data\n");
-      return -1;
-    }
+		if(iResult==-1){
+			printf("Error Code : %d\n",errno);
+			return -1;
+		}
 #endif
 		data[iResult]=0;// terminate character
 		ACLOG("from %s:%d receive %s\n",inet_ntoa(recvAddr.sin_addr),ntohs(recvAddr.sin_port),data);
@@ -72,12 +72,12 @@ public:
 public:
 	sockaddr_in remoteAddr,localAddr,recvAddr; // for sending, local binding, receiving respectively
 #ifdef _WIN32
-  WSADATA wsaData;
-  SOCKET sock_udp;
-  int recvlen=sizeof(recvAddr);
+	WSADATA wsaData;
+	unsigned int sock_udp;
+	int recvlen=sizeof(recvAddr);
 #else
-  int sock_udp;
-  unsigned int recvlen=sizeof(recvAddr);
+	int sock_udp;
+	unsigned int recvlen=sizeof(recvAddr);
 #endif
 };
 
