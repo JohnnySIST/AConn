@@ -2,7 +2,7 @@
 #define ACONN__SOUND__
 
 #include <iostream>
-#include <portaudio.h>
+#include "portaudio.h"
 #include "cursor.hpp"
 #include "config.hpp"
 #include "ringbuffer.hpp"

@@ -13,10 +13,6 @@ include_directories(include)
 add_subdirectory(thirdparty/portaudio)
 link_libraries(portaudio_static)
 
-# build and link libhv (static)
-add_subdirectory(thirdparty/libhv)
-link_libraries(hv_static)
-
 # add executable files for every file in /src
 aux_source_directory(src SOURCES)
 foreach(file IN LISTS SOURCES)
