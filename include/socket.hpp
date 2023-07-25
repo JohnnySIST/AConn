@@ -1,9 +1,15 @@
 #ifndef ACONN__SOCKET__
 #define ACONN__SOCKET__
 
+#include <cstring>
 #ifdef _WIN32
-
-#include <winsock2.h>
+  #include <winsock2.h>
+#else
+  #include <sys/types.h>
+  #include <sys/socket.h>
+  #include <netinet/in.h>
+  #include <arpa/inet.h>
+#endif
 #include "config.hpp"
 #include "cursor.hpp"
 #define BUFFER_MAX 2048
@@ -12,7 +18,9 @@
 class Socket{
 public:
 	Socket(){
+#ifdef _WIN32
 		WSAStartup(MAKEWORD(2,2),&wsaData);//请求winsock版本2.2
+#endif
 		sock_udp=socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP);
 		memset(&remoteAddr,0,sizeof(sockaddr));
 		remoteAddr.sin_family=AF_INET;
@@ -20,8 +28,12 @@ public:
 		localAddr.sin_addr.s_addr=htonl(INADDR_ANY);
 	}
 	~Socket(){
+#ifdef _WIN32
 		closesocket(sock_udp);
 		WSACleanup();
+#else
+    close(sock_udp);
+#endif
 	}
 	void set_addr(const char* addr,int port=0){
 		remoteAddr.sin_addr.s_addr=inet_addr(addr);
@@ -42,23 +54,31 @@ public:
 	}
 	int recv(char* data){
 		int iResult=recvfrom(sock_udp,data,BUFFER_MAX,0,(sockaddr*)&recvAddr,&recvlen);
+#ifdef _WIN32
 		if(iResult==SOCKET_ERROR){
 			printf("Error Code : %d\n",WSAGetLastError());
 			return -1;
 		}
+#else
+    if(iResult==-1){
+      printf("Error while receiving udp data\n");
+      return -1;
+    }
+#endif
 		data[iResult]=0;// terminate character
 		ACLOG("from %s:%d receive %s\n",inet_ntoa(recvAddr.sin_addr),ntohs(recvAddr.sin_port),data);
 		return iResult;
 	}
 public:
-	WSADATA wsaData;
 	sockaddr_in remoteAddr,localAddr,recvAddr; // for sending, local binding, receiving respectively
-	int recvlen=sizeof(recvAddr);
-	SOCKET sock_udp;
+#ifdef _WIN32
+  WSADATA wsaData;
+  SOCKET sock_udp;
+  int recvlen=sizeof(recvAddr);
+#else
+  int sock_udp;
+  unsigned int recvlen=sizeof(recvAddr);
+#endif
 };
-
-#else // #ifdef _WIN32
-
-#endif // #ifdef _WIN32
 
 #endif // ACONN__SOCKET__
