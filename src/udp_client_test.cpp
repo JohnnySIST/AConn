@@ -1,10 +1,17 @@
 #include "socket.hpp"
+#include "utils.hpp"
 int main(int argc,char* args[]){
 	Socket sock;
-	sock.set_addr("127.0.0.1",1234);
+	char serverAddr[100];
+	unsigned int serverPort;
+	printf("Please enter server address:");
+	my_gets(serverAddr,BUFFER_MAX);
+	printf("Please enter server port:");
+	scanf("%d",&serverPort);
+	sock.set_addr(serverAddr,serverPort);
 	char send[BUFFER_MAX],recv[BUFFER_MAX];
 	while(true){
-		gets(send);
+		my_gets(send,BUFFER_MAX);
 		sock.send(send,strlen(send));
 		sock.recv(recv);
 		printf("%s\n",recv);

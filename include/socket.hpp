@@ -92,6 +92,11 @@ public:
 		return errno;
 #endif
 	}
+	static const char* getAddrStr(unsigned int addr){
+		sockaddr_in address;
+		address.sin_addr.s_addr=addr;
+		return inet_ntoa(address.sin_addr);
+	}
 public:
 	sockaddr_in remoteAddr,localAddr,recvAddr; // for sending, local binding, receiving respectively
 #ifdef _WIN32

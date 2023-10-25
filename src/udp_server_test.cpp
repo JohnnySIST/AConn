@@ -1,7 +1,10 @@
 #include "socket.hpp"
 int main(int argc,char* args[]){
 	Socket sock;
-	if(sock.bind(1234)==-1){
+	unsigned int listenPort;
+	printf("Please enter listening port:");
+	scanf("%d",&listenPort);
+	if(sock.bind(listenPort)==-1){
 		printf("Socket listening port bind failed.\n",recv);
 		return 0;
 	}
@@ -9,7 +12,7 @@ int main(int argc,char* args[]){
 	unsigned int srcAddr,port;
 	while(true){
 		sock.recv(recv,srcAddr,port);
-		printf("%s\n",recv);
+		printf("From %s:%d receive %s\n",Socket::getAddrStr(srcAddr),port,recv);
 		sock.set_addr(srcAddr,port);
 		sock.send("msg received");
 	}
