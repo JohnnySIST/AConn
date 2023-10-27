@@ -5,7 +5,7 @@ int main(int argc,char* args[]){
 	printf("Please enter listening port:");
 	scanf("%d",&listenPort);
 	if(sock.bind(listenPort)==-1){
-		printf("Socket listening port bind failed.\n",recv);
+		printf("Socket listening port bind failed.\n");
 		return 0;
 	}
 	char recv[BUFFER_MAX];
