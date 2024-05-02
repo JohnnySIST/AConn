@@ -1,9 +1,38 @@
 #ifndef ACONN__CONFIG__
 #define ACONN__CONFIG__
 
-#define NUM_CHANNELS (2)
+/* Audio Configurations */
+
+#define NUM_CHANNELS (1)
 #define SAMPLE_RATE (44100)
 #define FRAMES_PER_BUFFER (512)
+
+/* Socket Configurations */
+
+#define SOCKET_BUFFER_MAX (2048)
+#define SAMPLES_PER_PACK (128)
+
+/* Definitions */
+const int EN_NEW_USER=0;
+const int EN_NEW_USER_ACK=1;
+const int EN_PACK_SPEAK=2;
+const int EN_PACK_HEAR=3;
+
+const int EN_BROADCAST=0;
+const int EN_SELF_LISTENER=1;
+struct Address{
+	Address(){
+		addr=0;
+		port=0;
+	}
+	Address(unsigned int addr,unsigned int port,int type){
+		this->addr=addr;
+		this->port=port;
+		this->type=type;
+	}
+	unsigned int addr,port;
+	int type;
+};
 
 /* Select sample format. */
 #if 0

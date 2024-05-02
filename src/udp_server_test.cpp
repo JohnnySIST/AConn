@@ -8,7 +8,7 @@ int main(int argc,char* args[]){
 		printf("Socket listening port bind failed.\n");
 		return 0;
 	}
-	char recv[BUFFER_MAX];
+	char recv[SOCKET_BUFFER_MAX];
 	unsigned int srcAddr,port;
 	while(true){
 		sock.recv(recv,srcAddr,port);

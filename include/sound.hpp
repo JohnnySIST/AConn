@@ -113,14 +113,36 @@ public:
 								const PaStreamCallbackTimeInfo* timeInfo,
 								PaStreamCallbackFlags statusFlags,
 								void *userData ){
-		// ACLOG("%f %f %f\n",timeInfo->currentTime,timeInfo->inputBufferAdcTime,timeInfo->outputBufferDacTime);
+		// ACLOG("Sound:defaultCallback %f %f %f\n",timeInfo->currentTime,timeInfo->inputBufferAdcTime,timeInfo->outputBufferDacTime);
 		UserData* user=(UserData*)userData;
-		// ACLOG("%d %d\n",user->outdata->readAvailable(),user->indata->writeAvailable());
+		// ACLOG("Sound:defaultCallback readAvailable=%d writeAvailable=%d\n",user->outdata->readAvailable(),user->indata->writeAvailable());
+		int length=framesPerBuffer*NUM_CHANNELS;
 		if(user->outdata!=NULL){
-			user->outdata->read(outputBuffer,framesPerBuffer*NUM_CHANNELS);
+			if(user->outdata->readAvailable()<length){
+				for(int i=0;i<length;i++){
+					*(SAMPLE*)((char*)outputBuffer+i*sizeof(SAMPLE))=SAMPLE_SILENCE;
+				}
+			}else{
+				user->outdata->read(outputBuffer,length);
+			}
+			
+			// printf("sound outdata length = %d bytes\n",length*sizeof(SAMPLE));
+			// for(int i=0;i<length;i++){
+				// printf("%d ",*(SAMPLE*)((char*)outputBuffer+i*sizeof(SAMPLE)));
+			// }
+			// printf("\n");
 		}
 		if(user->indata!=NULL){
-			user->indata->write(inputBuffer,framesPerBuffer*NUM_CHANNELS);
+			int len=user->indata->write(inputBuffer,length);
+			if(len<length){
+				printf("Sound:defaultCallback ringbuffer indata is full, %d/%d\n",user->indata->size(),user->indata->getCapacity());
+			}
+			
+			// printf("sound indata length = %d bytes\n",length*sizeof(SAMPLE));
+			// for(int i=0;i<length;i++){
+				// printf("%d ",*(SAMPLE*)((char*)inputBuffer+i*sizeof(SAMPLE)));
+			// }
+			// printf("\n");
 		}
 		return paContinue;
 	}

@@ -22,7 +22,7 @@ public:
 	}
 	int read(void *toread,int len){
 		int ret;
-		int available=readAvailable(); // to guarantee atomic
+		int available=readAvailable(); // to guarantee atomicity
 		if(len>available)ret=len=available;
 		else ret=len;
 		if(capacity-head<=len){
@@ -41,7 +41,7 @@ public:
 	}
 	int write(const void *towrite,int len){
 		int ret;
-		int available=writeAvailable(); // to guarantee atomic
+		int available=writeAvailable(); // to guarantee atomicity
 		if(len>available)ret=len=available;
 		else ret=len;
 		if(capacity-tail<=len){
@@ -57,6 +57,9 @@ public:
 	}
 	~RingBuffer(){
 		delete[] data;
+	}
+	int getCapacity(){
+		return capacity;
 	}
 private:
 	int head,tail,capacity,itemsize;

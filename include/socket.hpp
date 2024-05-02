@@ -13,7 +13,6 @@
 #endif
 #include "config.hpp"
 #include "cursor.hpp"
-#define BUFFER_MAX 2048
 
 // winsock wrapper
 class Socket{
@@ -44,11 +43,31 @@ public:
 		remoteAddr.sin_addr.s_addr=addr;
 		remoteAddr.sin_port=htons(port);
 	}
+	int setNonblocking(){
+#ifdef _WIN32
+		u_long iMode=1;
+		int iResult=ioctlsocket(sock_udp,FIONBIO,&iMode);
+#else
+		int flags=1;
+		int iResult=ioctl(sock_udp,FIOBIO,&flags);
+#endif
+		return iResult;
+	}
+	int setBlocking(){
+#ifdef _WIN32
+		u_long iMode=0;
+		int iResult=ioctlsocket(sock_udp,FIONBIO,&iMode);
+#else
+		int flags=0;
+		int iResult=ioctl(sock_udp,FIOBIO,&flags);
+#endif
+		return iResult;
+	}
 	int send(const char* data,int len=-1){
 		if(len==-1)len=strlen(data);
 		int iResult=sendto(sock_udp,data,len,0,(sockaddr*)&remoteAddr,sizeof(sockaddr_in));
 		if(iResult==SOCKET_ERROR){
-			printf("Socket bind Error Code : %d\n",getError());
+			printf("Socket send Error Code : %d\n",getError());
 			return -1;
 		}
 		// ACLOG("send to %s:%d\n",inet_ntoa(remoteAddr.sin_addr),ntohs(remoteAddr.sin_port));
@@ -64,9 +83,9 @@ public:
 		return iResult;
 	}
 	int recv(char* data){ // store received bytes into data
-		int iResult=recvfrom(sock_udp,data,BUFFER_MAX,0,(sockaddr*)&recvAddr,&recvlen);
+		int iResult=recvfrom(sock_udp,data,SOCKET_BUFFER_MAX,0,(sockaddr*)&recvAddr,&recvlen);
 		if(iResult==SOCKET_ERROR){
-			printf("Socket recv Error Code : %d\n",getError());
+			// printf("Socket recv Error Code : %d\n",getError());
 			return -1;
 		}
 		data[iResult]=0;// terminate character
@@ -74,9 +93,9 @@ public:
 		return iResult;
 	}
 	int recv(char* data,unsigned int& srcAddr,unsigned int& port){ // store source address & port
-		int iResult=recvfrom(sock_udp,data,BUFFER_MAX,0,(sockaddr*)&recvAddr,&recvlen);
+		int iResult=recvfrom(sock_udp,data,SOCKET_BUFFER_MAX,0,(sockaddr*)&recvAddr,&recvlen);
 		if(iResult==SOCKET_ERROR){
-			printf("Socket recv Error Code : %d\n",getError());
+			// printf("Socket recv Error Code : %d\n",getError());
 			return -1;
 		}
 		data[iResult]=0;// terminate character
@@ -97,7 +116,7 @@ public:
 		address.sin_addr.s_addr=addr;
 		return inet_ntoa(address.sin_addr);
 	}
-public:
+private:
 	sockaddr_in remoteAddr,localAddr,recvAddr; // for sending, local binding, receiving respectively
 #ifdef _WIN32
 	WSADATA wsaData;

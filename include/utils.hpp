@@ -4,7 +4,6 @@
 int my_gets(char* str,int num){
 	int cnt=0;
 	char x=getchar();
-	while(x=='\n')x=getchar();
 	while(x!='\n'&&cnt<num-1){
 		str[cnt++]=x;
 		x=getchar();
