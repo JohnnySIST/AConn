@@ -35,6 +35,7 @@ public:
 				pack.client_id=m_counter;
 				int len=pack.enc(sendBuffer);
 				respond(m_counter,len);
+				printf("User %d successfully registered\n",m_counter);
 				m_counter+=1;
 			}else if(pack.type==EN_PACK_SPEAK){
 				int client_id=findClientid(srcAddr,srcPort);

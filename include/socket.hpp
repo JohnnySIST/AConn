@@ -49,7 +49,7 @@ public:
 		int iResult=ioctlsocket(sock_udp,FIONBIO,&iMode);
 #else
 		int flags=1;
-		int iResult=ioctl(sock_udp,FIOBIO,&flags);
+		int iResult=ioctl(sock_udp,FIONBIO,&flags);
 #endif
 		return iResult;
 	}
@@ -59,7 +59,7 @@ public:
 		int iResult=ioctlsocket(sock_udp,FIONBIO,&iMode);
 #else
 		int flags=0;
-		int iResult=ioctl(sock_udp,FIOBIO,&flags);
+		int iResult=ioctl(sock_udp,FIONBIO,&flags);
 #endif
 		return iResult;
 	}
