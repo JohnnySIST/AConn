@@ -43,7 +43,7 @@ public:
 					fprintf(stderr,"Client not found!\n");
 					continue;
 				}
-				printf("From user %d receive seq=%d\n",client_id,pack.seq);
+				// printf("From user %d receive seq=%d\n",client_id,pack.seq);
 				
 				pack.type=EN_PACK_HEAR;
 				int len=pack.enc(sendBuffer);

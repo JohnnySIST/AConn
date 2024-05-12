@@ -5,12 +5,17 @@
 
 #define NUM_CHANNELS (1)
 #define SAMPLE_RATE (44100)
+// number of samples processed per channel in each callback
 #define FRAMES_PER_BUFFER (512)
 
 /* Socket Configurations */
 
+// maximum udp send&recv buffer length (in bytes)
 #define SOCKET_BUFFER_MAX (2048)
+// number of samples transmitted per packet
 #define SAMPLES_PER_PACK (128)
+// maximum buffer size for preserving packet sequence (in packets)
+#define SEQ_BUFFER_MAX (10)
 
 /* Definitions */
 const int EN_NEW_USER=0;
