@@ -78,17 +78,21 @@ public:
 						recv_seq=pack->seq;
 					}else{
 						Packet *t;
-						// printf("recv_seq=%d packseq=%d queuesize=%d\n",recv_seq,pack->seq,packet_queue.size());
+						printf("recv_seq=%d packseq=%d queuesize=%d\n",recv_seq,pack->seq,packet_queue.size());
 						if(!packet_queue.empty())printf("topseq=%d\n",packet_queue.top()->seq);
-						while(!packet_queue.empty()&&packet_queue.top()->seq+SEQ_BUFFER_MAX<=pack->seq){
+						int pack_seq=pack->seq;
+						packet_queue.push(pack);
+						while(!packet_queue.empty()&&
+							((packet_queue.top()->seq+SEQ_BUFFER_MAX<=pack_seq)||
+							(packet_queue.top()->seq==recv_seq+1))){
 							t=packet_queue.top();
 							packet_queue.pop();
-							// printf("poping packet %d\n",t->seq);
+							printf("poping packet %d\n",t->seq);
 							downdata->write(t->content,t->content_size);
 							recv_seq=t->seq;
 							delete t;
 						}
-						packet_queue.push(pack);
+						
 						pack=new Packet;
 					}
 				}
