@@ -10,11 +10,13 @@
 
 /* Socket Configurations */
 
-// maximum udp send&recv buffer length (in bytes)
-#define SOCKET_BUFFER_MAX (2048)
 // number of samples transmitted per packet
 #define SAMPLES_PER_PACK (128)
-// maximum buffer size for preserving packet sequence (in packets)
+// maximum udp send&recv buffer length (in bytes)
+#define SOCKET_BUFFER_MAX (2048)
+// maximum packet size
+#define PACKET_SIZE_MAX (512)
+// maximum buffer size for preserving packet order (in packets)
 #define SEQ_BUFFER_MAX (10)
 
 /* Definitions */

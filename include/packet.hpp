@@ -8,7 +8,7 @@ struct Packet{
 	int client_id; // type/id of client
 	int seq; // sequence number 
 	int content_size; // number of samples in content
-	char content[SAMPLES_PER_PACK*sizeof(SAMPLE)];
+	char content[PACKET_SIZE_MAX];
 	int enc(void *buffer){
 		char *buf=(char*)buffer;
 		*(int*)buf=type;

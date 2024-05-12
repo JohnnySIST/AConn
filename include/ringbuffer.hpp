@@ -61,6 +61,9 @@ public:
 	int getCapacity(){
 		return capacity;
 	}
+	int getItemsize(){
+		return itemsize;
+	}
 private:
 	int head,tail,capacity,itemsize;
 	char *data;

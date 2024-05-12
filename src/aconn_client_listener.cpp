@@ -1,5 +1,6 @@
 #include "client.hpp"
 #include "sound.hpp"
+#include <thread>
 int main(int argc,char* args[]){
 	// input server address
 	char serverAddr[30];
@@ -27,6 +28,7 @@ int main(int argc,char* args[]){
 	sound.setData(&downbuffer,NULL);
 	sound.open();
 	
-	client.start();
+	std::thread t_socket(&Client::start,&client);
+	t_socket.join();
 	return 0;
 }

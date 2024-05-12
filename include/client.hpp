@@ -50,6 +50,7 @@ public:
 		}
 		if(m_id==-1){
 			fprintf(stderr,"Not connected to server, start failed!\n");
+			return -1;
 		}
 		m_sock.setNonblocking();
 		Packet *pack=new Packet;
@@ -78,8 +79,8 @@ public:
 						recv_seq=pack->seq;
 					}else{
 						Packet *t;
-						printf("recv_seq=%d packseq=%d queuesize=%d\n",recv_seq,pack->seq,packet_queue.size());
-						if(!packet_queue.empty())printf("topseq=%d\n",packet_queue.top()->seq);
+						// printf("recv_seq=%d packseq=%d queuesize=%d\n",recv_seq,pack->seq,packet_queue.size());
+						// if(!packet_queue.empty())printf("topseq=%d\n",packet_queue.top()->seq);
 						int pack_seq=pack->seq;
 						packet_queue.push(pack);
 						while(!packet_queue.empty()&&
@@ -87,7 +88,7 @@ public:
 							(packet_queue.top()->seq==recv_seq+1))){
 							t=packet_queue.top();
 							packet_queue.pop();
-							printf("poping packet %d\n",t->seq);
+							// printf("poping packet %d\n",t->seq);
 							downdata->write(t->content,t->content_size);
 							recv_seq=t->seq;
 							delete t;
