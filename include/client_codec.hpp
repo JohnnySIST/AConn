@@ -7,6 +7,7 @@
 #include "config.hpp"
 #include "packet.hpp"
 #include <queue>
+#include <opus.h>
 
 struct PacketCompare {
 	bool operator()(const Packet* a,const Packet* b)const{
@@ -20,6 +21,12 @@ public:
 		m_id=-1;
 		updata=NULL;
 		downdata=NULL;
+		encoder=opus_encoder_create(SAMPLE_RATE,NUM_CHANNELS,OPUS_APPLICATION_VOIP,&error);
+		decoder=opus_decoder_create(SAMPLE_RATE,NUM_CHANNELS,&error);
+	}
+	~Client(){
+		opus_encoder_destroy(encoder);
+		opus_decoder_destroy(decoder);
 	}
 	void setBuffer(RingBuffer *updata,RingBuffer *downdata){
 		this->updata=updata;
@@ -58,12 +65,30 @@ public:
 		recv_seq=-1;
 		while(true){
 			if(updata!=NULL){
-				while(updata->readAvailable()>=SAMPLES_PER_PACK){
+				if(updata->readAvailable()>=SAMPLES_PER_ENC){
+					// encoding
+					int numsamples=updata->read(encBuffer,SAMPLES_PER_ENC);
+					int numbytes=opus_encode(encoder,encBuffer,numsamples,(unsigned char*)pack->content,SOCKET_BUFFER_MAX);
+					printf("encode: %d -> %d\n",numsamples,numbytes);
+					if(numbytes<0){
+						fprintf(stderr,"Failed to encode frame: %s\n",opus_strerror(numbytes));
+						return -1;
+					}
+					
 					pack->type=EN_PACK_SPEAK;
 					pack->client_id=m_id;
 					pack->seq=send_seq++;
-					pack->content_size=updata->read(pack->content,SAMPLES_PER_PACK)*updata->getItemsize();
+					pack->content_size=numbytes;
+					// rlutil::setColor(rlutil::MAGENTA);
+					// printf_hex(sendBuffer,numbytes);
+					// printf("END%dEND",numbytes);
+					// rlutil::resetColor();
 					int len=pack->enc(sendBuffer);
+					// rlutil::setColor(rlutil::BROWN);
+					// printf_hex(pack->content,numbytes);
+					// printf("END%dEND",numbytes);
+					// rlutil::resetColor();
+					
 					// printf("Send seq=%d\n",pack->seq);
 					m_sock.send(sendBuffer,len);
 				}
@@ -72,10 +97,24 @@ public:
 				int recvlen=m_sock.recv(recvBuffer);
 				if(recvlen>0){
 					pack->dec(recvBuffer);
-					printf("Recv seq=%d size=%d\n",pack->seq,pack->content_size);
+					// printf("Recv type=%d client_id=%d\n",pack->type,pack->client_id);
+					// printf("Recv seq=%d\n",pack->seq);
 					
 					if(recv_seq==-1||pack->seq==recv_seq+1){
-						downdata->write(pack->content,pack->content_size/downdata->getItemsize());
+						// decoding
+						int numbytes=pack->content_size;
+						// rlutil::setColor(rlutil::BLUE);
+						// printf_hex(pack->content,numbytes);
+						// printf("END%dEND",numbytes);
+						// rlutil::resetColor();
+						int numsamples=opus_decode(decoder,(unsigned char*)pack->content,numbytes,encBuffer,CODEC_BUFFER_MAX,0);
+						printf("decode: %d -> %d\n",numbytes,numsamples);
+						if(numsamples<0){
+							fprintf(stderr,"Failed to decode frame: %s\n",opus_strerror(numsamples));
+							return -1;
+						}
+					
+						downdata->write(encBuffer,numsamples);
 						recv_seq=pack->seq;
 					}else{
 						Packet *t;
@@ -89,7 +128,17 @@ public:
 							t=packet_queue.top();
 							packet_queue.pop();
 							// printf("poping packet %d\n",t->seq);
-							downdata->write(t->content,t->content_size/downdata->getItemsize());
+							
+							// decoding
+							int numbytes=pack->content_size;
+							int numsamples=opus_decode(decoder,(unsigned char*)pack->content,numbytes,encBuffer,CODEC_BUFFER_MAX,0);
+							printf("decode: %d -> %d\n",numbytes,numsamples);
+							if(numsamples<0){
+								fprintf(stderr,"Failed to decode frame: %s\n",opus_strerror(numsamples));
+								return -1;
+							}
+							
+							downdata->write(encBuffer,numsamples);
 							recv_seq=t->seq;
 							delete t;
 						}
@@ -111,6 +160,12 @@ private:
 	// For packet sequence preservation
 	int recv_seq;
 	std::priority_queue<Packet*,std::vector<Packet*>,PacketCompare>packet_queue;
+	
+	// For encoding and decoding
+	SAMPLE encBuffer[CODEC_BUFFER_MAX];
+	OpusEncoder *encoder;
+	OpusDecoder *decoder;
+	int error;
 };
 
 #endif // ACONN__CLIENT__

@@ -9,9 +9,11 @@ SET(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
 include_directories(include)
 
-# build and link portaudio (static)
+# build and link portaudio (static) and opus
 add_subdirectory(thirdparty/portaudio)
+add_subdirectory(thirdparty/opus)
 link_libraries(portaudio_static)
+link_libraries(opus)
 
 if(WIN32)
 	link_libraries(ws2_32)

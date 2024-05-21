@@ -7,7 +7,7 @@ struct Packet{
 	int type; // type id of packet
 	int client_id; // type/id of client
 	int seq; // sequence number 
-	int content_size; // number of samples in content
+	int content_size; // number of bytes in content
 	char content[PACKET_SIZE_MAX];
 	int enc(void *buffer){
 		char *buf=(char*)buffer;
@@ -22,8 +22,8 @@ struct Packet{
 		buf+=sizeof(int);
 		*(int*)buf=content_size;
 		buf+=sizeof(int);
-		memcpy(buf,content,content_size*sizeof(SAMPLE));
-		buf+=content_size*sizeof(SAMPLE);
+		memcpy(buf,content,content_size);
+		buf+=content_size;
 		return buf-(char*)buffer;
 	}
 	void dec(const void *buffer){
@@ -39,8 +39,8 @@ struct Packet{
 		buf+=sizeof(int);
 		content_size=*(int*)buf;
 		buf+=sizeof(int);
-		memcpy(content,buf,content_size*sizeof(SAMPLE));
-		buf+=content_size*sizeof(SAMPLE);
+		memcpy(content,buf,content_size);
+		buf+=content_size;
 		return;
 	}
 };

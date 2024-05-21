@@ -1,3 +1,6 @@
 [submodule "thirdparty/portaudio"]
 	path = thirdparty/portaudio
 	url = https://github.com/PortAudio/portaudio.git
+[submodule "thirdparty/opus"]
+	path = thirdparty/opus
+	url = https://github.com/xiph/opus

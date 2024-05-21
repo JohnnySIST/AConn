@@ -4,12 +4,20 @@
 /* Audio Configurations */
 
 #define NUM_CHANNELS (1)
-#define SAMPLE_RATE (44100)
+#define SAMPLE_RATE (48000)
 // number of samples processed per channel in each callback
 #define FRAMES_PER_BUFFER (512)
 
+/* Codec Configurations */
+
+#define SAMPLES_PER_ENC (480)
+#define SAMPLES_PER_DEC (48)
+#define CODEC_BUFFER_MAX (2048)
+
 /* Socket Configurations */
 
+// interval between two client routines (in us) TODO
+#define CLIENT_INTERVAL (200)
 // number of samples transmitted per packet
 #define SAMPLES_PER_PACK (128)
 // maximum udp send&recv buffer length (in bytes)
@@ -47,7 +55,7 @@ struct Address{
 typedef float SAMPLE;
 #define SAMPLE_SILENCE  (0.0f)
 #define PRINTF_S_FORMAT "%.8f"
-#elif 1
+#elif 1 // opus only supports int16
 #define PA_SAMPLE_TYPE  paInt16
 typedef short SAMPLE;
 #define SAMPLE_SILENCE  (0)
