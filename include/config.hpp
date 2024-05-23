@@ -8,6 +8,10 @@
 // number of samples processed per channel in each callback
 #define FRAMES_PER_BUFFER (512)
 
+/* Anonymization Configurations */
+#define SAMPLES_PER_ANONY (512)
+#define ANONY_BUFFER_MAX (2048)
+
 /* Codec Configurations */
 
 #define SAMPLES_PER_ENC (480)

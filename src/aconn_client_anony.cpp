@@ -1,5 +1,6 @@
 #include "client_codec.hpp"
 #include "sound.hpp"
+#include "anony.hpp"
 #include <thread>
 int main(int argc,char* args[]){
 	// input server address
@@ -14,22 +15,29 @@ int main(int argc,char* args[]){
 	scanf("%d",&serverPort);
 	
 	// create upload and download buffers
+	RingBuffer inbuffer=RingBuffer(SAMPLE_RATE*NUM_CHANNELS,sizeof(SAMPLE));
 	RingBuffer upbuffer=RingBuffer(SAMPLE_RATE*NUM_CHANNELS,sizeof(SAMPLE));
 	RingBuffer downbuffer=RingBuffer(SAMPLE_RATE*NUM_CHANNELS,sizeof(SAMPLE));
 	
 	// setup network
 	Client client;
 	client.setBuffer(&upbuffer,&downbuffer);
-	if(client.connect(serverAddr,serverPort,EN_BROADCAST)==-1){
+	if(client.connect(serverAddr,serverPort,EN_SELF_LISTENER)==-1){
 		return -1;
 	}
 	
 	// setup audio interface
 	Sound sound;
-	sound.setData(&downbuffer,&upbuffer);
+	sound.setData(&downbuffer,&inbuffer);
 	sound.open();
 	
+	// setup anonymization
+	Anony anony;
+	anony.setBuffer(&upbuffer,&inbuffer);
+	
 	std::thread t_socket(&Client::start,&client);
+	std::thread t_anony(&Anony::start,&anony);
 	t_socket.join();
+	t_anony.join();
 	return 0;
 }

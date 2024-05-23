@@ -65,7 +65,8 @@ public:
 		return itemsize;
 	}
 private:
-	int head,tail,capacity,itemsize;
+	volatile int head,tail;
+	int capacity,itemsize;
 	char *data;
 };
 

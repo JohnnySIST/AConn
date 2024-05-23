@@ -20,7 +20,7 @@ int main(int argc,char* args[]){
 	// setup network
 	Client client;
 	client.setBuffer(&upbuffer,&downbuffer);
-	if(client.connect(serverAddr,serverPort,EN_SELF_LISTENER)==-1){
+	if(client.connect(serverAddr,serverPort,EN_BROADCAST)==-1){
 		return -1;
 	}
 	

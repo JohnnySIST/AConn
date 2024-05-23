@@ -24,8 +24,6 @@ int main(int argc,char* args[]){
 			numsamples=opus_decode(decoder,buffer,numbytes,samples,CODEC_BUFFER_MAX,0);
 			printf("decode: %d -> %d\n",numbytes,numsamples);
 			outbuffer.write(samples,numsamples);
-		}else{ // 这里不加sleep就会失败，可能是编译器优化问题
-			rlutil::msleep(10);
 		}
 	}
 	sound.close();
