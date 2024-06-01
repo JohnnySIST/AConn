@@ -69,7 +69,7 @@ public:
 					// encoding
 					int numsamples=updata->read(encBuffer,SAMPLES_PER_ENC);
 					int numbytes=opus_encode(encoder,encBuffer,numsamples,(unsigned char*)pack->content,SOCKET_BUFFER_MAX);
-					printf("encode: %d -> %d\n",numsamples,numbytes);
+					// printf("encode: %d -> %d\n",numsamples,numbytes);
 					if(numbytes<0){
 						fprintf(stderr,"Failed to encode frame: %s\n",opus_strerror(numbytes));
 						return -1;
@@ -108,7 +108,7 @@ public:
 						// printf("END%dEND",numbytes);
 						// rlutil::resetColor();
 						int numsamples=opus_decode(decoder,(unsigned char*)pack->content,numbytes,encBuffer,CODEC_BUFFER_MAX,0);
-						printf("decode: %d -> %d\n",numbytes,numsamples);
+						// printf("decode: %d -> %d\n",numbytes,numsamples);
 						if(numsamples<0){
 							fprintf(stderr,"Failed to decode frame: %s\n",opus_strerror(numsamples));
 							return -1;

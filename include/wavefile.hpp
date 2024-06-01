@@ -2,9 +2,11 @@
 #define ATNET__WAVEFILE__
 
 #include <fstream>
+#include "config.hpp"
+
 namespace WaveFile{
 
-int sampleRate=44100;
+int sampleRate=SAMPLE_RATE;
 struct WaveFileInfo{
 	int sampleRate;
 	int size;
@@ -45,13 +47,14 @@ void getWaveFileInfo(const char* path,WaveFileInfo* info){
 	file.close();
 }
 template<typename T>
-void readWaveFile(const char* path,T* data){
+int readWaveFile(const char* path,T* data){
 	std::ifstream file(path,std::ios_base::binary);
 	int size;
 	file.seekg(40);
 	file.read((char*)&size,sizeof(int));
 	file.read((char*)data,size);
 	file.close();
+	return size;
 }
 
 } // end of namespace WaveFile

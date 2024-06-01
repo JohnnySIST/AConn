@@ -9,7 +9,7 @@
 #define FRAMES_PER_BUFFER (512)
 
 /* Anonymization Configurations */
-#define SAMPLES_PER_ANONY (512)
+#define SAMPLES_PER_ANONY (480)
 #define ANONY_BUFFER_MAX (2048)
 
 /* Codec Configurations */
